@@ -9,14 +9,17 @@ function love.load()
 
     Background = love.graphics.newImage("Assets/Space5.png")
     Menu = love.graphics.newImage("Assets/Menu.png")
+    GameOverScreen = love.graphics.newImage("Assets/LOSER.png")
 
     Sounds = {}
     Sounds.Bounce = love.audio.newSource("Sounds/Explosion6.wav", "static")
     Sounds.Collect = love.audio.newSource("Sounds/Collect3.wav", "static")
-    Sounds.Menu = love.audio.newSource("Sounds/AOTU-Menu.wav", "stream")
-    Sounds.GameOver = love.audio.newSource("Sounds/Goofy-died.wav", "stream")
+    Sounds.Menu = love.audio.newSource("Sounds/MenuV2.wav", "stream")
+    Sounds.GameOver = love.audio.newSource("Sounds/LostV2.wav", "stream")
+    Sounds.inGame = love.audio.newSource("Sounds/inGame.wav", "stream")
     Sounds.Bounce:setVolume(0.5)
     Sounds.Collect:setVolume(0.3)
+    Sounds.inGame:setVolume(0.2)
     
     --Sammy
     Sammy = {}
@@ -83,6 +86,7 @@ end
     if gameState == "playing" then
     Sounds.Menu:stop()
     Sounds.GameOver:stop()
+    Sounds.inGame:play()
     Sammy.x, Sammy.y = love.mouse.getPosition()
     DeadSam.x = Sammy.x
     DeadSam.y = Sammy.y
@@ -122,13 +126,14 @@ if gameState == "playing" or gameState == "gameOver" then
 end
 
 if gameState == "gameOver" then
+    Sounds.inGame:stop()
     Sounds.GameOver:play()
     local DeadSamSpeed = 220
     DeadSam.x = (DeadSam.x + math.cos(DeadSam.angle) * DeadSamSpeed * dt)
     DeadSam.y = (DeadSam.y + math.sin(DeadSam.angle) * DeadSamSpeed * dt)
 
     CheckWallsHit(DeadSam)
-    if love.keyboard.isDown("r") then
+    if love.keyboard.isDown("space") then
         gameState = "playing"
         resetGame()
     end
@@ -155,7 +160,6 @@ function love.draw()
 
     --Sammy
     love.graphics.setColor(1,1,1)
-    --love.graphics.circle("fill", Sammy.x, Sammy.y, 20)
     love.graphics.draw(Sammy.Sprites, Sammy.x, Sammy.y,0,1,1,20,20)
     end
 
@@ -185,14 +189,13 @@ function love.draw()
         love.graphics.draw(DeadSam.Sprites, DeadSam.x, DeadSam.y,0,1,1,20,20)
 
         --GameOverScreen
-        love.graphics.setColor(1,0,0)
-        love.graphics.setFont(gameOverFont)
-        love.graphics.print("[YOU DIED LOSER. PRESS R TO RESTART]",30, 230)
+        love.graphics.setColor(1,1,1)
+        love.graphics.draw(GameOverScreen, 0, 0, 0, 0.6, 0.6, -45, -330)
     end
 
      --Debug Stuff
     love.graphics.setColor(1,1,1)
-    --love.graphics.print("Mouse Coordinates: " .. Sammy.x .. ", " .. Sammy.y, 10, 10)ll
+    --love.graphics.print("Mouse Coordinates: " .. Sammy.x .. ", " .. Sammy.y, 10, 10)lll
    -- love.graphics.print("Alien1 Coordinates: " .. Alien1.x .. ", " .. Alien1.y, 10, 40)
    --love.graphics.print("SammyToCoin: " .. SammyToCoin .. ", Coin.Radius " .. Coin.Radius, 10, 400)
    --love.graphics.print("DeadoSam x: ".. DeadSam.x .. ", DeadoSam y: ".. DeadSam.y)
